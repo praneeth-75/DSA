@@ -1,0 +1,403 @@
+AD  1
+
+import pandas as pd
+import numpy as np
+
+dataset = pd.read_csv('/content/drive/MyDrive/sample.csv')
+
+dataset.head()
+
+dataset.isnull().sum()
+
+
+x = dataset.iloc[:, :-1].values
+y = dataset.iloc[:,3:].values
+
+from sklearn.impute import SimpleImputer
+
+imp = SimpleImputer(missing_values = np.nan, strategy ='mean')
+x[:,1:3] = imp.fit_transform(x[:,1:3])
+
+x
+
+
+from sklearn.preprocessing import LabelEncoder
+LE = LabelEncoder()
+x[:,0]=LE.fit_transform(x[:,0])
+
+x
+
+y
+
+y=LE.fit_transform(y)
+
+y
+
+
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.compose import ColumnTransformer
+
+transform =  ColumnTransformer([("norm1",OneHotEncoder(),[0])], remainder = 'passthrough')
+x = transform.fit_transform(x)
+x
+
+
+from sklearn.model_selection import train_test_split
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.2, random_state = 0)
+
+x_train
+
+
+from sklearn.preprocessing import StandardScaler
+SC = StandardScaler()
+x_train[:,3:5]=SC.fit_transform(x_train[:,3:5])
+x_train
+
+print("Orignal Data:\n",dataset)
+
+print("ML Needed data Data:\n")
+x_train
+
+
+AD  2
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import accuracy_score
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.svm import SVC
+from sklearn.datasets import load_iris
+
+dataset = pd.read_csv('Downloads/iris_csv - iris_csv.csv')
+print(dataset )
+dataset.head()
+dataset.shape
+dataset.info()
+dataset.describe()
+data=dataset.drop_duplicates(subset ='class')
+print(data)
+a=dataset.value_counts("class")
+print(a)
+sns.lineplot(x='sepallength',y='sepalwidth',data=dataset)
+plt.show()
+
+sns.countplot(x='class',data=dataset)
+sns.scatterplot(x='sepallength',y='sepalwidth',hue='class',data=dataset)
+
+
+sns.histplot(dataset['sepallength'],bins=7)
+
+sns.boxplot(x='sepallength',data=dataset)
+
+3
+
+
+import numpy as np
+import pandas as pd
+from sklearn.svm import SVC
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+import pandas as pd
+import io
+
+df = pd.read_csv('/content/drive/MyDrive/mnist_train.csv')
+print(df)
+
+nine = df.iloc[4, 1:]
+nine.shape
+
+nine = nine.values.reshape(28, 28)
+plt.imshow(nine, cmap='gray')
+
+x=df.drop('label', axis=1)
+y=df['label']
+x_train, x_test, y_train, y_test=train_test_split(x,y,test_size=0.25, random_state=42)
+
+print(x)
+
+print(y)
+
+knn = KNeighborsClassifier(n_neighbors=3)
+knn.fit(x_train, y_train)
+
+model=SVC()
+model.fit(x_train,y_train)
+
+y_predict=knn.predict(x_test)
+y_predict
+
+y_predict=knn.predict(x_test)
+y_predict
+
+accuracy=accuracy_score(y_test,y_predict)*100
+accuracy
+
+from sklearn.metrics import confusion_matrix
+
+cm = confusion_matrix(y_test, y_predict)
+cm
+
+import matplotlib.pyplot as plt
+from sklearn.metrics import ConfusionMatrixDisplay
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+
+color = 'white'
+matrix = ConfusionMatrixDisplay(confusion_matrix=cm,
+                              display_labels=model.classes_)
+matrix.plot()
+
+plt.show()
+
+from sklearn.metrics import classification_report
+
+print(classification_report(y_test, y_predict))
+
+4
+
+5
+
+6
+
+import numpy as np
+import pandas as pd
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+
+
+import pandas as pd
+
+df = pd.read_csv('/content/drive/MyDrive/train.csv')
+print(df)
+
+x=df[['x']]
+y=df['y']
+x = np.array(x).reshape(-1,1)
+x_train, x_test, y_train, y_test=train_test_split(x,y,test_size=0.25, random_state=42)
+
+print(x)
+
+print(y)
+
+regressor = LinearRegression()
+regressor.fit(x_train, y_train)
+
+pred = regressor.predict(x_test)
+
+
+plt.scatter(x_train, y_train)
+plt.plot(x_train, regressor.predict(x_train), color='black')
+plt.title('Fit on training set')
+plt.xlabel('X-Train')
+plt.ylabel('Y-Train')
+
+test = pd.read_csv('/content/drive/MyDrive/test.csv')
+test.plot.scatter('x', 'y', color='g')
+plt.plot(test['x'], regressor.predict(test.iloc[:,0:1].values), color='blue')
+plt.title('Linear Regression Ouput on Test Data Set')
+plt.xlabel('X-Values')
+plt.ylabel('Y-Values')
+plt.show()
+
+7
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn.datasets import load_iris
+
+# Load the Iris dataset
+iris = load_iris()
+print(iris)
+X = iris.data
+y = iris.target
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+print(X)
+
+print(y)
+# Initialize the SVM classifier with a linear kernel
+svm_classifier = SVC(kernel='linear')
+
+# Train the model
+svm_classifier.fit(X_train, y_train)
+
+# Make predictions
+y_pred = svm_classifier.predict(X_test)
+
+# Evaluate the model
+accuracy = accuracy_score(y_test, y_pred)
+confusion = confusion_matrix(y_test, y_pred)
+
+print(f"Accuracy: {accuracy * 100:.2f}%")
+print("Confusion Matrix:")
+print(confusion)
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Create a heatmap for the confusion matrix
+plt.figure(figsize=(6, 4))
+sns.heatmap(confusion, annot=True, fmt="d", cmap="Blues", cbar=False)
+plt.xlabel("Predicted Class")
+plt.ylabel("True Class")
+plt.title("Confusion Matrix")
+plt.xticks(ticks=[0.5, 1.5, 2.5], labels=["Setosa", "Versicolor", "Virginica"])
+plt.yticks(ticks=[0.5, 1.5, 2.5], labels=["Setosa", "Versicolor", "Virginica"])
+plt.show()
+
+You, Apr 27, 8:19 AM
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+classification_report_str = classification_report(y_test, y_pred, target_names=iris.target_names)
+print("\nClassification Report:")
+print(classification_report_str)
+
+
+8
+
+
+import numpy as np
+import pandas as pd
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+
+df = pd.read_csv(io.BytesIO(uploaded['PlayTennis.csv']))
+print(df)
+
+from sklearn.preprocessing import LabelEncoder
+Le = LabelEncoder()
+
+df['outlook'] = Le.fit_transform(df['outlook'])
+df['temp'] = Le.fit_transform(df['temp'])
+df['humidity'] = Le.fit_transform(df['humidity'])
+df['windy'] = Le.fit_transform(df['windy'])
+df['play'] = Le.fit_transform(df['play'])
+
+x=df.drop('play', axis=1)
+y=df['play']
+x_train, x_test, y_train, y_test=train_test_split(x,y,test_size=0.25, random_state=42)
+
+print(x)
+
+print(y)
+
+from sklearn import tree
+model = tree.DecisionTreeClassifier(criterion = 'entropy')
+model.fit(x_train,y_train)
+
+tree.plot_tree(model)
+
+import graphviz
+dot_data = tree.export_graphviz(model, out_file=None)
+graph = graphviz.Source(dot_data)
+graph
+
+
+y_pred = model.predict(x_test)
+
+y_pred == y_test
+
+
+9
+
+import numpy as np
+import pandas as pd
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+df = pd.read_csv('/content/drive/MyDrive/train.csv')
+print(df)
+
+x=df.drop('y', axis=1)
+y=df['y']
+
+df.dropna(subset=['x'], inplace=True)
+
+df.dropna(subset=['y'], inplace=True)
+
+print(x)
+
+print(y)
+
+x_train, x_test, y_train, y_test=train_test_split(x,y,test_size=0.25, random_state=42)
+
+model_1 = LinearRegression()
+model_2 = RandomForestRegressor()
+
+model_1.fit(x_train,y_train)
+model_2.fit(x_train,y_train)
+
+y_predict1=model_1.predict(x_test)
+y_predict2=model_2.predict(x_test)
+
+pred_final = (y_predict1+y_predict2)/2.0
+
+from sklearn.metrics import mean_squared_error
+print(mean_squared_error(y_test, pred_final))
+
+
+10
+
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_spliti
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import accuracy_score
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.svm import SVC
+
+
+
+from google.colab import files
+uploaded = files.upload()
+
+import pandas as pd
+
+home_data = pd.read_csv('housing.csv', usecols = ['longitude', 'latitude', 'median_house_value'])
+home_data.head()
+
+import seaborn as sns
+
+sns.scatterplot(data = home_data, x = 'longitude', y = 'latitude', hue = 'median_house_value')
+
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(home_data[['latitude', 'longitude']], home_data[['median_house_value']], test_size=0.33, random_state=0)
+
+from sklearn import preprocessing
+
+X_train_norm = preprocessing.normalize(X_train)
+X_test_norm = preprocessing.normalize(X_test)
+
+from sklearn.cluster import KMeans
+kmeans = KMeans(init='k-means++')
+kmeans = KMeans(n_clusters = 3, random_state = 0, n_init='auto')
+kmeans.fit(X_train_norm)
+
+sns.scatterplot(data = X_train, x = 'longitude', y = 'latitude', hue = kmeans.labels_)
+
+from sklearn.metrics import silhouette_score
+
+silhouette_score(X_train_norm, kmeans.labels_, metric='euclidean')
+
